@@ -19,8 +19,9 @@ def task2_products_checkconstraint():
         id INT PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(100) NOT NULL,
         price FLOAT,
+        discount FLOAT,
         in_stock BOOLEAN DEFAULT TRUE,
-        CHECK (price > 0)
+        CHECK (discount <=  price AND price > 0)
     );
     '''
 
@@ -31,9 +32,9 @@ def task3_users_uniqueconstraint():
     query = """
     CREATE TABLE IF NOT EXISTS users(
         id INT PRIMARY KEY AUTO_INCREMENT,
-        username VARCHAR(50) UNIQUE,
+        username VARCHAR(50),
         is_active BOOLEAN DEFAULT TRUE,
-        # UNIQUE(username) 
+        UNIQUE(username)
     );
     """
     execute_query(query)
@@ -106,4 +107,84 @@ def task5_orders_fullconstraint():
     );
     """
 
+    execute_query(query)
+
+
+def task6_multiple_columns_unqiue():
+    query = """
+        CREATE TABLE IF NOT EXISTS user_sessions(
+            user_id INT ,
+            session_token VARCHAR(255),
+            created_at DATETIME NOT NULL DEFAULT NOW(),
+            UNIQUE(user_id, session_token)
+        );
+    """
+    execute_query(query)
+
+
+def task7_update_on_cascade():
+    query1 = """
+        CREATE TABLE IF NOT EXISTS countries(
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            UNIQUE(name)  
+        );
+    """
+    query2 = """
+        CREATE TABLE IF NOT EXISTS cities(
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            country_id INT,
+            FOREIGN KEY (country_id)
+            REFERENCES countries(id)
+            ON UPDATE CASCADE
+        );
+    """
+
+    execute_query(query1)
+    execute_query(query2)
+
+
+def task8_datetime_now():
+    query = """
+        CREATE TABLE IF NOT EXISTS logs(
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            message TEXT,
+            created_at DATETIME DEFAULT NOW()
+        )
+    """
+    execute_query(query)
+
+
+def task9_enum():
+    query = """
+        CREATE TABLE IF NOT EXISTS payments(
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            amount FLOAT,
+            status ENUM('Pending', 'paid', 'failed') DEFAULT 'Pending'
+        )
+    """
+
+    execute_query(query)
+
+
+def task10_adding_simpleindex():
+    # what is index
+    # Indexing makes columns faster to query by creating pointers to where data is stored within a database.
+    # types of indexing
+    # 1 middle entry
+    # 2 smallest entry
+    # 3 greates entry
+
+    # index nma tez qidiruv va tablelarni saralaydi,
+    # SELECT sorovini mukamalashtiradi yani zaprosnin ishlanish tezligi oshiradi 10 sec bogan indexingdan keyin 1 sec tushadi
+    # minus taraflarni malumotni update qilvotganda indexni ham ozgartirishga tori keladi kop ish talab qilishi mumkun
+
+    # 3 hil turdagi indexlash bor
+    # 1 orta kirish
+    # 2 kichik kirish
+    # 3 katta kirish
+
+    query = """
+        CREATE INDEX simpleindex ON user_sessions(created_at);
+    """
     execute_query(query)
